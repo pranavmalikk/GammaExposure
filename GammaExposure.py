@@ -8,46 +8,31 @@ import itertools
 
 
 #%%
-<<<<<<< HEAD
-=======
 #Make dataframe by cutting out top values of data file
->>>>>>> First Commit
 df = pd.read_csv('SPY-07-02', sep='\s+', header=None, skiprows=0)
 df.columns = ['1stCol','2ndCol','3rdCol','4thCol','5thCol','6thCol']
 
 #%%
-<<<<<<< HEAD
-=======
 #Store spot price
->>>>>>> First Commit
 spot_price = df['6thCol'][0].split(',')[1]
 spot_price = float(spot_price)
 df = df.iloc[3:]
 
 
 #%%
-<<<<<<< HEAD
-=======
 #Split first column into 21 columns
->>>>>>> First Commit
 new = df["1stCol"].str.split(",", n = 21, expand = True) 
 new.columns = ['ExpirationDate','Calls','CallLastSale','CallNet','CallBid','CallAsk','CallVol','CallIV','CallDelta','CallGamma','CallOpenInt','CallStrike','Puts','PutLastSale','PutNet','PutBid','PutAsk','PutVol','PutIV','PutDelta','PutGamma','PutOpenInt']
 
 
 #%%
-<<<<<<< HEAD
-=======
 #Store strike price
->>>>>>> First Commit
 callStrike = [x[-6:-3] for x in new.Calls]
 new['StrikePrice'] = callStrike
 
 
 #%%
-<<<<<<< HEAD
-=======
 #Calculate Call GEX by doing calculation and Call GEX Notional Value
->>>>>>> First Commit
 new['CallGamma'] = new['CallGamma'].astype(float)
 new['CallOpenInt'] = new['CallOpenInt'].astype(float)
 new['CallGEX'] = new['CallGamma'] * new['CallOpenInt'] * 100 * spot_price
@@ -57,10 +42,7 @@ new['PutIV'] = new['PutIV'].astype(float)
 
 
 #%%
-<<<<<<< HEAD
-=======
 #Calculate Put GEX and Put GEX Notional Value
->>>>>>> First Commit
 new['PutGamma'] = new['PutGamma'].astype(float)
 new['PutOpenInt'] = new['PutOpenInt'].astype(float)
 new['PutGEX'] = new['PutGamma'] * new['PutOpenInt'] * 100 * spot_price * -1
@@ -68,10 +50,7 @@ new['PutGEXNotional'] = new.PutGEX * (spot_price * .01)
 
 
 #%%
-<<<<<<< HEAD
-=======
 #Only choose expirations within 94 days
->>>>>>> First Commit
 #EndDate = new.iloc[0]['ExpirationDate']+ timedelta(days=94)
 EndDate = date.today()+ timedelta(days=94)
 new['ExpirationDate']= pd.to_datetime(new['ExpirationDate'])
@@ -82,10 +61,7 @@ new = new[(new['ExpirationDate'] != 0.0)]
 
 
 #%%
-<<<<<<< HEAD
-=======
 #Calculate Total Gamma and Total Gamma Notional Value
->>>>>>> First Commit
 flag = True
 new['TotalGamma'] = new.CallGEX + new.PutGEX
 new['TotalGammaNotional'] = new.CallGEXNotional + new.PutGEXNotional
@@ -98,14 +74,11 @@ for a, b in zip(new.StrikePrice, new.TotalGammaNotional):
 new['StrikeAndGamma'] = strikeWithGamma
 
 #%%
-<<<<<<< HEAD
-=======
 #Cut out values of dataframe which the TotalGamma is 0
 new = new[(new['TotalGamma'] != 0.0)]
 
 #%%
 #Calculate flip point
->>>>>>> First Commit
 def _zero_gex(strikes):
     def _aux_add(a, b):
         return (b[0], a[1] + b[1])
@@ -116,19 +89,15 @@ def _zero_gex(strikes):
     else:
         op = max
     return op(cumsum, key=lambda i: i[1])[0]
-<<<<<<< HEAD
 
 #%%
 _zero_gex(new.StrikeAndGamma)
 
 #%%
 #new = new[(new['TotalGamma'] != 0.0)]
-
-=======
 _zero_gex(new.StrikeAndGamma)
 #Updating Changes
 
->>>>>>> First Commit
 
 #%%
 #More plotting 
